@@ -1,3 +1,7 @@
+/*
+Package null provides nullable types that are conscious of undefined values
+when marshaling or unmarshaling.
+*/
 package null
 
 import (
