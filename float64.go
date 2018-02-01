@@ -67,7 +67,7 @@ func (f Float64) String() string {
 	if f.Valid {
 		return strconv.FormatFloat(f.Float64, 'g', -1, 64)
 	}
-	return sInvalid
+	return InvalidNullableStr
 }
 
 func (f Float64) MarshalText() ([]byte, error) {

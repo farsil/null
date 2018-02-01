@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-// Provides a nullable Bool.
+// Provides a nullable bool.
 type Bool struct {
 	// The underlying bool value.
 	Bool bool
@@ -80,15 +80,16 @@ func (b *Bool) FromZero(v bool) {
 	b.Bool = v
 }
 
-// Returns a string representation of Bool.
+// Returns a string representation of Bool if valid,
+// and InvalidNullableStr if not valid.
 func (b Bool) String() string {
 	if b.Valid {
 		return strconv.FormatBool(b.Bool)
 	}
-	return sInvalid
+	return InvalidNullableStr
 }
 
-// Marshals the underlying value to "true" or "false" if
+// Marshals the underlying value to the byte strings "true" or "false" if
 // Bool is valid, otherwise it marshals to nil. err is always nil.
 func (b Bool) MarshalText() (data []byte, err error) {
 	if b.Valid {
@@ -136,9 +137,9 @@ func (b *Bool) Set(str string) error {
 	return makeParseError("parse", str, b.Bool)
 }
 
-// Unmarshals from a string representation of a boolean. It behaves like Set,
-// except that it returns an UnmarshalError instead of a ParseError if
-// text is an invalid boolean string.
+// Unmarshals from a byte string representation of a boolean.
+// It behaves like Set, except that it returns an UnmarshalError instead of a
+// ParseError if text is an invalid boolean string.
 func (b *Bool) UnmarshalText(text []byte) error {
 	if b.Set(string(text)) != nil {
 		return makeUnmarshalError("text", text, *b)
@@ -149,9 +150,8 @@ func (b *Bool) UnmarshalText(text []byte) error {
 // Unmarshals from a JSON object. If the JSON object is the JSON null value,
 // or an error is produced, Bool becomes invalid. If the JSON object is a JSON
 // boolean, Bool becomes valid, the object is parsed,
-// and the the underlying value is set to the parsed value.
-// Malformed JSON produces an UnmarshalError, while unrecognized JSON types
-// produce a TypeError.
+// and the the underlying value is set to the parsed value. Other JSON types
+// produce a TypeError. Malformed JSON produces an UnmarshalError.
 func (b *Bool) UnmarshalJSON(data []byte) error {
 	var obj interface{}
 	if json.Unmarshal(data, &obj) != nil {

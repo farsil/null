@@ -81,18 +81,18 @@ func (t *Time) FromZero(v time.Time) {
 	t.Time = v
 }
 
-// Returns a string representation of Time.
-// It is formatted following the RFC3339 standard with nanoseconds.
-// For dates which year is beyond 10000, that are not allowed by the standard,
-// String() tries to print a meaningful datetime regardless.
+// Returns a string representation of Time if valid, and InvalidNullableStr
+// if not valid. Valid Time objects are formatted following the RFC3339 standard
+// with nanoseconds. For dates which year is beyond 10000, not allowed by the
+// standard, String tries to print a meaningful datetime regardless.
 func (t Time) String() string {
 	if t.Valid {
 		return t.Time.Format(time.RFC3339Nano)
 	}
-	return sInvalid
+	return InvalidNullableStr
 }
 
-// Marshals the underlying value to a string representation if Time is
+// Marshals the underlying value to a byte string representation if Time is
 // valid, otherwise it marshals to nil. The string representation is formatted
 // following the RFC3339 standard with nanoseconds. If the underlying value
 // cannot be marshaled, a MarshalError is returned.
@@ -147,7 +147,8 @@ func (t *Time) Set(str string) error {
 	return makeParseError("parse", str, t.Time)
 }
 
-// Unmarshals from a string representation of a time.Time. It behaves like Set,
+// Unmarshals from a byte string representation of a time.Time.
+// It behaves like Set,
 // except that it returns an UnmarshalError instead of a ParseError if
 // text is an invalid RFC3339 string.
 func (t *Time) UnmarshalText(text []byte) error {
@@ -165,9 +166,8 @@ func (t *Time) UnmarshalText(text []byte) error {
 // If the JSON object is a JSON string, UnmarshalJSON attempts to parse the
 // object. If the JSON string is a valid RFC3339 datetime,
 // the underlying value is set to the parsed value and Time becomes valid,
-// otherwise Time becomes invalid and a ParseError is returned. Malformed JSON
-// produces an UnmarshalError, while unrecognized JSON types produce a
-// TypeError.
+// otherwise Time becomes invalid and a ParseError is returned. Other JSON types
+// produce a TypeError. Malformed JSON produces an UnmarshalError.
 func (t *Time) UnmarshalJSON(data []byte) error {
 	var obj interface{}
 	var err error
@@ -186,6 +186,7 @@ func (t *Time) UnmarshalJSON(data []byte) error {
 		t.Valid = false
 		return nil
 	default:
+		t.Valid = false
 		return makeTypeError("json", value, "string", "nil")
 	}
 }
@@ -204,6 +205,7 @@ func (t *Time) Scan(obj interface{}) error {
 		t.Valid = false
 		return nil
 	default:
+		t.Valid = false
 		return makeTypeError("sql", value, "time.Time", "nil")
 	}
 }
