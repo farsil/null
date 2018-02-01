@@ -6,10 +6,13 @@ import (
 	"strconv"
 )
 
-// Provides a nullable Bool. If Valid is false, the value stored in Bool is
-// meaningless.
+// Provides a nullable Bool.
 type Bool struct {
-	Bool  bool
+	// The underlying bool value.
+	Bool bool
+
+	// If true, the underlying bool value is valid. If false,
+	// the value stored in Bool is meaningless.
 	Valid bool
 }
 
