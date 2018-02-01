@@ -12,17 +12,16 @@ type Bool struct {
 	Bool bool
 
 	// If true, the underlying bool value is valid. If false,
-	// the value stored in Bool is meaningless.
+	// the value stored in Bool is invalid, and thus meaningless.
 	Valid bool
 }
 
-// Creates a valid Bool from boolean v.
+// Creates a valid Bool from v.
 func BoolFrom(v bool) Bool {
 	return BoolFromPtr(&v)
 }
 
-// Creates a Bool from boolean pointer v. If v is nil,
-// the returned Bool is invalid.
+// Creates a Bool from pointer p. If p is nil, the returned Bool is invalid.
 func BoolFromPtr(p *bool) Bool {
 	if p != nil {
 		return Bool{
@@ -33,8 +32,7 @@ func BoolFromPtr(p *bool) Bool {
 	return Bool{}
 }
 
-// Creates a Bool from boolean v. If v is false,
-// the returned Bool is invalid.
+// Creates a Bool from v. If v is false, the returned Bool is invalid.
 func BoolFromZero(v bool) Bool {
 	return Bool{
 		Bool:  v,
@@ -51,7 +49,7 @@ func (b Bool) Ptr() *bool {
 	return nil
 }
 
-// Returns a the underlying boolean if Bool is valid, otherwise
+// Returns the underlying boolean if Bool is valid, otherwise
 // returns false.
 func (b Bool) Zero() bool {
 	if b.Valid {
@@ -66,7 +64,7 @@ func (b *Bool) From(v bool) {
 	b.Bool = v
 }
 
-// If v is nil, Bool becomes invalid, otherwise it sets the underlying boolean
+// If p is nil, Bool becomes invalid, otherwise it sets the underlying boolean
 // to the value pointed to by p, and Bool becomes valid.
 func (b *Bool) FromPtr(p *bool) {
 	b.Valid = p != nil
@@ -90,7 +88,7 @@ func (b Bool) String() string {
 	return sInvalid
 }
 
-// Marshals the boolean true to "true" and the boolean false to "false" if
+// Marshals the underlying value to "true" or "false" if
 // Bool is valid, otherwise it marshals to nil. err is always nil.
 func (b Bool) MarshalText() (data []byte, err error) {
 	if b.Valid {
@@ -151,8 +149,9 @@ func (b *Bool) UnmarshalText(text []byte) error {
 // Unmarshals from a JSON object. If the JSON object is the JSON null value,
 // or an error is produced, Bool becomes invalid. If the JSON object is a JSON
 // boolean, Bool becomes valid, the object is parsed,
-// and the parsed value becomes the underlying value. Malformed JSON produces
-// an UnmarshalError, while unrecognized JSON types produce a TypeError.
+// and the the underlying value is set to the parsed value.
+// Malformed JSON produces an UnmarshalError, while unrecognized JSON types
+// produce a TypeError.
 func (b *Bool) UnmarshalJSON(data []byte) error {
 	var obj interface{}
 	if json.Unmarshal(data, &obj) != nil {
