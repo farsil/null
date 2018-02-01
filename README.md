@@ -28,7 +28,7 @@ place of the `sql.Nullxxx` types. The interfaces implemented by each type are:
 - `Valuer` from `database/sql/driver`
 - `Stringer` from `fmt` (as part of the `Value` interface from `flag`)
 
-# Installation
+## Installation
 Installation is as simple as invoking:
 ```
 $ go get github.com/farsil/null
@@ -90,7 +90,7 @@ Book title: 'The foo does a bar'
 Book has no subtitle
 ```
 ## Credits
-This repository is heavily inspired by https://github.com/guregu/null. I 
+This repository is heavily inspired by [https://github.com/guregu/null]. I 
 originarily wanted to create a fork of that repository, but since there are 
 critical incompatibilities of interfaces and behavior, I decided to start from 
 scratch.
