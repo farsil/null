@@ -267,14 +267,14 @@ func TestString_FromZero(t *testing.T) {
 
 func TestString_String(t *testing.T) {
 	cases := []struct {
-	nullable null.String
-	string   string
-}{
-	{null.String{Str: "foo", Valid: true}, "foo"},
-	{null.String{Str: "bar", Valid: true}, "bar"},
-	{null.String{}, "<invalid>"},
-	{null.String{Str: "baz", Valid: false}, "<invalid>"},
-}
+		nullable null.String
+		string   string
+	}{
+		{null.String{Str: "foo", Valid: true}, "foo"},
+		{null.String{Str: "bar", Valid: true}, "bar"},
+		{null.String{}, "<invalid>"},
+		{null.String{Str: "baz", Valid: false}, "<invalid>"},
+	}
 
 	for n, c := range cases {
 		if c.string != c.nullable.String() {
@@ -452,7 +452,7 @@ func TestString_UnmarshalText(t *testing.T) {
 	nilType := reflect.TypeOf(nil)
 
 	cases := []struct {
-		bytes []byte
+		bytes   []byte
 		literal string
 		valid   bool
 		errType reflect.Type
@@ -501,7 +501,7 @@ func TestString_UnmarshalJSON(t *testing.T) {
 	unmarshalErrType := reflect.TypeOf(null.UnmarshalError{})
 
 	cases := []struct {
-		json   []byte
+		json    []byte
 		literal string
 		valid   bool
 		errType reflect.Type

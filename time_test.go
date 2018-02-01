@@ -388,7 +388,7 @@ func TestTime_MarshalJSON(t *testing.T) {
 
 	cases := []struct {
 		nullable null.Time
-		json    []byte
+		json     []byte
 		errType  reflect.Type
 	}{
 		{null.Time{Time: zero, Valid: true}, zeroBytes, nilType},
@@ -606,7 +606,7 @@ func TestTime_UnmarshalJSON(t *testing.T) {
 	unmarshalErrType := reflect.TypeOf(null.UnmarshalError{})
 
 	cases := []struct {
-		json   []byte
+		json    []byte
 		literal time.Time
 		valid   bool
 		errType reflect.Type

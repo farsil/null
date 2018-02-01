@@ -322,7 +322,7 @@ func TestBool_MarshalJSON(t *testing.T) {
 
 	cases := []struct {
 		nullable null.Bool
-		json    []byte
+		json     []byte
 		errType  reflect.Type
 	}{
 		{null.Bool{Bool: false, Valid: true}, []byte("false"), nilType},
@@ -524,7 +524,7 @@ func TestBool_UnmarshalJSON(t *testing.T) {
 	unmarshalErrType := reflect.TypeOf(null.UnmarshalError{})
 
 	cases := []struct {
-		json   []byte
+		json    []byte
 		literal bool
 		valid   bool
 		errType reflect.Type
