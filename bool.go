@@ -143,7 +143,7 @@ func (b *Bool) Set(str string) error {
 
 // UnmarshalText unmarshals from a byte string to b.
 // It behaves like Set, except that it returns an UnmarshalError instead of a
-// ParseError if text is an invalid boolean byte string.
+// ParseError in case text cannot be parsed.
 func (b *Bool) UnmarshalText(text []byte) error {
 	if b.Set(string(text)) != nil {
 		return makeUnmarshalError("text", text, *b)

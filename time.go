@@ -150,7 +150,7 @@ func (t *Time) Set(str string) error {
 
 // UnmarshalText unmarshals from a byte string to t.
 // It behaves like Set, except that it returns an UnmarshalError instead of a
-// ParseError if text is an invalid RFC3339 byte string.
+// ParseError in case text cannot be parsed.
 func (t *Time) UnmarshalText(text []byte) error {
 	err := t.Time.UnmarshalText(text)
 	t.Valid = err == nil && len(text) > 0
