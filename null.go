@@ -2,7 +2,7 @@
 Package null provides nullable types that are conscious of undefined values
 when marshaling or unmarshaling.
 
-omitempty
+JSON and the omitempty tag
 
 Nullable types in this package offer a Ptr() method that is useful to deal with
 JSON's omitempty struct tag:
@@ -23,8 +23,8 @@ omitting the relative name from the JSON output.
 package null
 
 const (
-	// Returned by String methods when the nullable is not valid.
-	InvalidNullableStr = "<invalid>"
+	// Returned by String when the nullable is not valid.
+	InvalidNullableString = "<invalid>"
 
 	// 32 or 64 bit integers
 	intSize = 32 << (^uint(0) >> 63)

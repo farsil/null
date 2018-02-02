@@ -5,24 +5,24 @@ import (
 	"encoding/json"
 )
 
-// Provides a nullable string.
+// String implements a nullable string.
 type String struct {
-	// The underlying string value.
-	// The field can't be named String because it conflicts with the
-	// flag.Value interface implementation.
+	// Str holds the underlying string value. The field can't be named String
+	// because it conflicts with the flag.Value interface implementation.
 	Str string
 
-	// If true, the underlying string value is valid. If false,
-	// the value stored in Str is invalid, and thus meaningless.
+	// Valid holds the validity flag. If true, the underlying value is valid.
+	// If false, it is invalid, and thus meaningless.
 	Valid bool
 }
 
-// Creates a valid String from v.
+// StringFrom creates a valid String from v.
 func StringFrom(v string) String {
 	return StringFromPtr(&v)
 }
 
-// Creates a String from pointer p. If p is nil, the returned String is invalid.
+// StringFromPtr creates a String from pointer p. If p is nil,
+// the returned String is invalid.
 func StringFromPtr(p *string) String {
 	if p != nil {
 		return String{
@@ -33,7 +33,7 @@ func StringFromPtr(p *string) String {
 	return String{}
 }
 
-// Creates a String from v. If v is the empty string,
+// StringFromZero creates a String from v. If v is the empty string,
 // the returned String is invalid.
 func StringFromZero(v string) String {
 	return String{
@@ -42,7 +42,7 @@ func StringFromZero(v string) String {
 	}
 }
 
-// Returns a pointer to the underlying string if String is valid, otherwise
+// Ptr returns a pointer to the underlying value of s if s is valid, otherwise
 // returns nil.
 func (s String) Ptr() *string {
 	if s.Valid {
@@ -51,7 +51,7 @@ func (s String) Ptr() *string {
 	return nil
 }
 
-// Returns the underlying string if String is valid, otherwise
+// Zero returns the underlying value of s if s is valid, otherwise
 // returns an empty string.
 func (s String) Zero() string {
 	if s.Valid {
@@ -60,14 +60,14 @@ func (s String) Zero() string {
 	return ""
 }
 
-// Sets the underlying string to v. String becomes valid.
+// From sets the underlying value of s to v. s becomes valid.
 func (s *String) From(v string) {
 	s.Valid = true
 	s.Str = v
 }
 
-// If p is nil, String becomes invalid, otherwise it sets the underlying string
-// to the value pointed to by p, and String becomes valid.
+// FromPtr invalidates s if p is nil, otherwise it sets the
+// underlying value of s to the value pointed to by p, and s becomes valid.
 func (s *String) FromPtr(p *string) {
 	s.Valid = p != nil
 	if p != nil {
@@ -75,24 +75,24 @@ func (s *String) FromPtr(p *string) {
 	}
 }
 
-// If v is the empty string, String becomes invalid, otherwise it sets the
-// underlying string to v, and String becomes valid.
+// FromZero invalidates s if v is the empty string, otherwise it sets the
+// underlying value of s to v, and s becomes valid.
 func (s *String) FromZero(v string) {
 	s.Valid = v != ""
 	s.Str = v
 }
 
-// Returns the underlying string if String is valid,
-// and InvalidNullableStr if not valid.
+// String returns the underlying value of s if s is valid,
+// and InvalidNullableString if not valid.
 func (s String) String() string {
 	if s.Valid {
 		return s.Str
 	}
-	return InvalidNullableStr
+	return InvalidNullableString
 }
 
-// Converts the underlying value to []byte if
-// String is valid, and returns nil if not valid. err is always nil.
+// MarshalText converts the underlying value of s to []byte if
+// s is valid, and returns nil if not valid. err is always nil.
 func (s String) MarshalText() (data []byte, err error) {
 	if s.Valid {
 		return []byte(s.Str), nil
@@ -100,8 +100,8 @@ func (s String) MarshalText() (data []byte, err error) {
 	return nil, nil
 }
 
-// Marshals to a JSON string if String is valid,
-// otherwise it marshals to the JSON null value. err is always nil.
+// MarshalJSON encodes the underlying value of s to a JSON string if s is
+// valid, otherwise it returns the JSON null value. err is always nil.
 func (s String) MarshalJSON() (data []byte, err error) {
 	if s.Valid {
 		return json.Marshal(s.Str)
@@ -109,7 +109,7 @@ func (s String) MarshalJSON() (data []byte, err error) {
 	return jNull, nil
 }
 
-// Returns the underlying string if String is valid,
+// Value returns the underlying value of s if s is valid,
 // otherwise nil. err is always nil.
 func (s String) Value() (v driver.Value, err error) {
 	if s.Valid {
@@ -118,31 +118,34 @@ func (s String) Value() (v driver.Value, err error) {
 	return nil, nil
 }
 
-// Like FromZero, if v is the empty string, String becomes invalid,
-// otherwise it sets the underlying string to v, and String becomes valid.
+// Set invalidates s if str is the empty string,
+// otherwise it sets the underlying value of s to str, and s becomes valid.
 // This function always returns nil.
 func (s *String) Set(str string) error {
 	s.FromZero(str)
 	return nil
 }
 
-// Unmarshals from a byte string. If the byte string is nil,
-// String becomes invalid, otherwise the underlying string is set to the
-// byte string and String becomes valid. The returned error is always nil.
+// UnmarshalText unmarshals from a byte string to s. If the byte string is nil,
+// s becomes invalid, otherwise the underlying value of s is set to the
+// converted byte string and s becomes valid.
+// The returned error is always nil.
 func (s *String) UnmarshalText(text []byte) error {
 	s.Str = string(text)
 	s.Valid = text != nil
 	return nil
 }
 
-// Unmarshals from a JSON object. If the JSON object is the JSON null value,
-// or an error is produced, String becomes invalid. If the JSON object is a JSON
-// string, String becomes valid, and the underlying value is set to the JSON
-// string. Other JSON types produce a TypeError. Malformed JSON produces an
-// UnmarshalError.
+// UnmarshalJSON unmarshals from a JSON encoded byte string to s.
+// If the encoded JSON data represent the JSON null value,
+// or an error is produced, s becomes invalid. If the encoded JSON data
+// represent a JSON string, s becomes valid, and the underlying
+// value of s is set to the JSON string. Other JSON types produce a TypeError.
+// Malformed JSON produces an UnmarshalError.
 func (s *String) UnmarshalJSON(data []byte) error {
 	var obj interface{}
 	if json.Unmarshal(data, &obj) != nil {
+		s.Valid = false
 		return makeUnmarshalError("json", data, *s)
 	}
 	switch value := obj.(type) {
@@ -159,10 +162,10 @@ func (s *String) UnmarshalJSON(data []byte) error {
 	}
 }
 
-// Assigns a value from a database driver. If obj's type is string,
-// String becomes valid, and the underlying string becomes the value of obj.
-// If obj is nil, String becomes invalid. If obj's type is any other type,
-// String becomes invalid, and a TypeError is returned.
+// Scan assigns a value from a database driver. If obj's type is string,
+// s becomes valid, and the underlying value of s becomes the value of obj.
+// If obj is nil, s becomes invalid. If obj's type is any other type,
+// s becomes invalid, and a TypeError is returned.
 func (s *String) Scan(obj interface{}) error {
 	switch value := obj.(type) {
 	case string:

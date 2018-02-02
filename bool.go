@@ -6,22 +6,23 @@ import (
 	"strconv"
 )
 
-// Provides a nullable bool.
+// Bool implements a nullable bool.
 type Bool struct {
-	// The underlying bool value.
+	// Bool holds the underlying bool value.
 	Bool bool
 
-	// If true, the underlying bool value is valid. If false,
-	// the value stored in Bool is invalid, and thus meaningless.
+	// Valid holds the validity flag. If true, the underlying value is valid.
+	// If false, it is invalid, and thus meaningless.
 	Valid bool
 }
 
-// Creates a valid Bool from v.
+// BoolFrom creates a valid Bool from v.
 func BoolFrom(v bool) Bool {
 	return BoolFromPtr(&v)
 }
 
-// Creates a Bool from pointer p. If p is nil, the returned Bool is invalid.
+// BoolFromPtr creates a Bool from pointer p. If p is nil,
+// the returned Bool is invalid.
 func BoolFromPtr(p *bool) Bool {
 	if p != nil {
 		return Bool{
@@ -32,7 +33,8 @@ func BoolFromPtr(p *bool) Bool {
 	return Bool{}
 }
 
-// Creates a Bool from v. If v is false, the returned Bool is invalid.
+// BoolFromZero creates a Bool from v. If v is false,
+// the returned Bool is invalid.
 func BoolFromZero(v bool) Bool {
 	return Bool{
 		Bool:  v,
@@ -40,8 +42,8 @@ func BoolFromZero(v bool) Bool {
 	}
 }
 
-// Returns a pointer to the underlying boolean if Bool is valid, otherwise
-// returns nil.
+// Ptr returns a pointer to the underlying value of b if b is valid,
+// otherwise returns nil.
 func (b Bool) Ptr() *bool {
 	if b.Valid {
 		return &b.Bool
@@ -49,7 +51,7 @@ func (b Bool) Ptr() *bool {
 	return nil
 }
 
-// Returns the underlying boolean if Bool is valid, otherwise
+// Zero returns the underlying value of b if b is valid, otherwise
 // returns false.
 func (b Bool) Zero() bool {
 	if b.Valid {
@@ -58,14 +60,14 @@ func (b Bool) Zero() bool {
 	return false
 }
 
-// Sets the underlying boolean to v. Bool becomes valid.
+// From sets the underlying value of b to v. b becomes valid.
 func (b *Bool) From(v bool) {
 	b.Valid = true
 	b.Bool = v
 }
 
-// If p is nil, Bool becomes invalid, otherwise it sets the underlying boolean
-// to the value pointed to by p, and Bool becomes valid.
+// FromPtr invalidates b if p is nil, otherwise it sets the underlying value
+// of b to the value pointed to by p, and b becomes valid.
 func (b *Bool) FromPtr(p *bool) {
 	b.Valid = p != nil
 	if p != nil {
@@ -73,24 +75,26 @@ func (b *Bool) FromPtr(p *bool) {
 	}
 }
 
-// If v is false, Bool becomes invalid, otherwise it sets the underlying boolean
-// to v, and Bool becomes valid.
+// FromZero invalidates b if v is false,
+// otherwise it sets the underlying value of b to v, and b becomes valid.
 func (b *Bool) FromZero(v bool) {
 	b.Valid = v == true
 	b.Bool = v
 }
 
-// Returns a string representation of Bool if valid,
-// and InvalidNullableStr if not valid.
+// String returns a string representation of b. If b is valid,
+// it returns either "true" or "false", otherwise it returns
+// InvalidNullableString.
 func (b Bool) String() string {
 	if b.Valid {
 		return strconv.FormatBool(b.Bool)
 	}
-	return InvalidNullableStr
+	return InvalidNullableString
 }
 
-// Marshals the underlying value to the byte strings "true" or "false" if
-// Bool is valid, otherwise it marshals to nil. err is always nil.
+// MarshalText marshals b to a byte string representation.
+// If b is valid, it marshals the underlying value of b to either
+// "true" or "false", otherwise it returns nil. err is always nil.
 func (b Bool) MarshalText() (data []byte, err error) {
 	if b.Valid {
 		return []byte(b.String()), nil
@@ -98,8 +102,9 @@ func (b Bool) MarshalText() (data []byte, err error) {
 	return nil, nil
 }
 
-// Marshals to a JSON boolean if Bool is valid,
-// otherwise it marshals to the JSON null value. err is always nil.
+// MarshalJSON encodes the underlying value of b to a JSON boolean
+// if b is valid, otherwise it returns the JSON null value.
+// err is always nil.
 func (b Bool) MarshalJSON() (data []byte, err error) {
 	if b.Valid {
 		if b.Bool {
@@ -111,7 +116,7 @@ func (b Bool) MarshalJSON() (data []byte, err error) {
 	return jNull, nil
 }
 
-// Returns the underlying boolean if Bool is valid,
+// Value returns the underlying value of b if b is valid,
 // otherwise nil. err is always nil.
 func (b Bool) Value() (v driver.Value, err error) {
 	if b.Valid {
@@ -120,12 +125,11 @@ func (b Bool) Value() (v driver.Value, err error) {
 	return nil, nil
 }
 
-// Parses a string representation of a boolean. If str is an empty string,
-// Bool becomes invalid. If str is a valid boolean string, Bool becomes valid,
-// str is parsed, and the parsed value becomes the underlying value.
-// If str is an invalid boolean string, Bool becomes invalid, and a ParseError
-// is returned. Recognized boolean strings are 1, true, True, TRUE, T, t, 0,
-// false, False, FALSE, f, F.
+// Set invalidates b if str is the empty string, otherwise it parses str into
+// the underlying value of b, and b becomes valid. If str is not a recognized
+// boolean string, b becomes invalid and a ParseError is returned.
+// Recognized boolean strings are 1, true, True, TRUE, T, t, 0, false, False,
+// FALSE, f, F.
 func (b *Bool) Set(str string) error {
 	var err error
 	b.Bool, err = strconv.ParseBool(str)
@@ -137,9 +141,9 @@ func (b *Bool) Set(str string) error {
 	return makeParseError("parse", str, b.Bool)
 }
 
-// Unmarshals from a byte string representation of a boolean.
+// UnmarshalText unmarshals from a byte string to b.
 // It behaves like Set, except that it returns an UnmarshalError instead of a
-// ParseError if text is an invalid boolean string.
+// ParseError if text is an invalid boolean byte string.
 func (b *Bool) UnmarshalText(text []byte) error {
 	if b.Set(string(text)) != nil {
 		return makeUnmarshalError("text", text, *b)
@@ -147,14 +151,16 @@ func (b *Bool) UnmarshalText(text []byte) error {
 	return nil
 }
 
-// Unmarshals from a JSON object. If the JSON object is the JSON null value,
-// or an error is produced, Bool becomes invalid. If the JSON object is a JSON
-// boolean, Bool becomes valid, the object is parsed,
-// and the the underlying value is set to the parsed value. Other JSON types
+// UnmarshalJSON unmarshals from a JSON encoded byte string to b.
+// If the encoded JSON data represent the JSON null value,
+// or an error is produced, b becomes invalid. If the encoded JSON data
+// represent a JSON boolean, b becomes valid, and the underlying
+// value of b is set to the JSON boolean. Other JSON types
 // produce a TypeError. Malformed JSON produces an UnmarshalError.
 func (b *Bool) UnmarshalJSON(data []byte) error {
 	var obj interface{}
 	if json.Unmarshal(data, &obj) != nil {
+		b.Valid = false
 		return makeUnmarshalError("json", data, *b)
 	}
 	switch value := obj.(type) {
@@ -171,10 +177,10 @@ func (b *Bool) UnmarshalJSON(data []byte) error {
 	}
 }
 
-// Assigns a value from a database driver. If obj's type is bool,
-// Bool becomes valid, and the underlying boolean becomes the value of obj.
-// If obj is nil, Bool becomes invalid. If obj's type is any other type,
-// Bool becomes invalid, and a TypeError is returned.
+// Scan assigns a value from a database driver. If obj's type is bool,
+// b becomes valid, and the underlying value of b becomes the value of obj.
+// If obj is nil, b becomes invalid. If obj's type is any other type,
+// b becomes invalid, and a TypeError is returned.
 func (b *Bool) Scan(obj interface{}) error {
 	switch value := obj.(type) {
 	case bool:

@@ -67,7 +67,7 @@ func (i Int) String() string {
 	if i.Valid {
 		return strconv.FormatInt(int64(i.Int), 10)
 	}
-	return InvalidNullableStr
+	return InvalidNullableString
 }
 
 func (i Int) MarshalText() ([]byte, error) {

@@ -6,22 +6,23 @@ import (
 	"time"
 )
 
-// Provides a nullable time.Time.
+// Time implements a nullable time.Time.
 type Time struct {
-	// The underlying time.Time value.
+	// Time holds the underlying time.Time value.
 	Time time.Time
 
-	// If true, the underlying time.Time value is valid. If false,
-	// the value stored in Time is invalid, and thus meaningless.
+	// Valid holds the validity flag. If true, the underlying value is valid.
+	// If false, it is invalid, and thus meaningless.
 	Valid bool
 }
 
-// Creates a valid Time from v.
+// TimeFrom creates a valid Time from v.
 func TimeFrom(v time.Time) Time {
 	return TimeFromPtr(&v)
 }
 
-// Creates a Time from pointer p. If p is nil, the returned Time is invalid.
+// TimeFromPtr creates a Time from pointer p. If p is nil,
+// the returned Time is invalid.
 func TimeFromPtr(v *time.Time) Time {
 	if v != nil {
 		return Time{
@@ -32,7 +33,7 @@ func TimeFromPtr(v *time.Time) Time {
 	return Time{}
 }
 
-// Creates a Time from v. If v is a zero time.Time,
+// TimeFromZero creates a Time from v. If v represents the zero time instant,
 // the returned Time is invalid.
 func TimeFromZero(v time.Time) Time {
 	return Time{
@@ -41,8 +42,8 @@ func TimeFromZero(v time.Time) Time {
 	}
 }
 
-// Returns a pointer to the underlying time.Time if Time is valid, otherwise
-// returns nil.
+// Ptr returns a pointer to the underlying value of t if t is valid,
+// otherwise returns nil.
 func (t Time) Ptr() *time.Time {
 	if t.Valid {
 		return &t.Time
@@ -50,8 +51,8 @@ func (t Time) Ptr() *time.Time {
 	return nil
 }
 
-// Returns the underlying time.Time if Bool is valid, otherwise
-// returns a zero time.Time.
+// Zero returns the underlying value of t if t is valid, otherwise
+// returns a time.Time representing the zero time instant.
 func (t Time) Zero() time.Time {
 	if t.Valid {
 		return t.Time
@@ -59,14 +60,14 @@ func (t Time) Zero() time.Time {
 	return time.Time{}
 }
 
-// Sets the underlying time.Time to v. Time becomes valid.
+// From sets the underlying value of t to v. t becomes valid.
 func (t *Time) From(v time.Time) {
 	t.Valid = true
 	t.Time = v
 }
 
-// If p is nil, Time becomes invalid, otherwise it sets the underlying time.Time
-// to the value pointed to by p, and Time becomes valid.
+// FromPtr invalidates t if p is nil, otherwise it sets the underlying value
+// of t to the value pointed to by p, and t becomes valid.
 func (t *Time) FromPtr(v *time.Time) {
 	t.Valid = v != nil
 	if v != nil {
@@ -74,27 +75,28 @@ func (t *Time) FromPtr(v *time.Time) {
 	}
 }
 
-// If v is a zero time.Time, Time becomes invalid,
-// otherwise it sets the underlying time.Time to v, and Bool becomes valid.
+// FromZero invalidates t if v represents the zero time instant,
+// otherwise it sets the underlying value of t to v, and t becomes valid.
 func (t *Time) FromZero(v time.Time) {
 	t.Valid = !v.IsZero()
 	t.Time = v
 }
 
-// Returns a string representation of Time if valid, and InvalidNullableStr
-// if not valid. Valid Time objects are formatted following the RFC3339 standard
-// with nanoseconds. For dates which year is beyond 10000, not allowed by the
+// String returns a string representation of t. If t is valid,
+// it formats the underlying value of t according to the RFC3339 standard with
+// nanoseconds. For time instants which year is beyond 10000, not allowed by the
 // standard, String tries to print a meaningful datetime regardless.
+// If t is not valid, it returns InvalidNullableString.
 func (t Time) String() string {
 	if t.Valid {
 		return t.Time.Format(time.RFC3339Nano)
 	}
-	return InvalidNullableStr
+	return InvalidNullableString
 }
 
-// Marshals the underlying value to a byte string representation if Time is
-// valid, otherwise it marshals to nil. The string representation is formatted
-// following the RFC3339 standard with nanoseconds. If the underlying value
+// MarshalText marshals t to a byte string representation. If t is valid, it
+// formats the underlying value of t according to the RFC3339 standard with
+// nanoseconds, otherwise it returns nil. If the underlying value of t
 // cannot be marshaled, a MarshalError is returned.
 func (t Time) MarshalText() (data []byte, err error) {
 	if t.Valid {
@@ -107,10 +109,11 @@ func (t Time) MarshalText() (data []byte, err error) {
 	return nil, nil
 }
 
-// Marshals to a JSON string representation if Time is valid,
-// otherwise it marshals to the JSON null value. The string representation
-// is formatted following the RFC3339 standard with nanoseconds.
-// If the underlying value cannot be marshaled, a MarshalError is returned.
+// MarshalJSON encodes the underlying value of t to a JSON string
+// representation if t is valid, otherwise it returns the JSON null value.
+// The string representation is formatted according to the RFC3339 standard
+// with nanoseconds. If the underlying value of t cannot be marshaled,
+// a MarshalError is returned.
 func (t Time) MarshalJSON() (data []byte, err error) {
 	if t.Valid {
 		bytes, err := t.Time.MarshalJSON()
@@ -122,7 +125,7 @@ func (t Time) MarshalJSON() (data []byte, err error) {
 	return jNull, nil
 }
 
-// Returns the underlying time.Time if Time is valid,
+// Value returns the underlying value of t if t is valid,
 // otherwise nil. err is always nil.
 func (t Time) Value() (v driver.Value, err error) {
 	if t.Valid {
@@ -131,11 +134,9 @@ func (t Time) Value() (v driver.Value, err error) {
 	return nil, nil
 }
 
-// Parses a string representation of a time.Time. If str is an empty string,
-// Time becomes invalid. If str is a valid RFC3339 string, Time becomes valid,
-// str is parsed, and the parsed value becomes the underlying value.
-// If str is an invalid RFC3339 string, Time becomes invalid, and a ParseError
-// is returned.
+// Set invalidates t if str is the empty string, otherwise it parses str into
+// the underlying value of t, and t becomes valid. If str is not a valid
+// RFC3339 string, t becomes invalid and a ParseError is returned.
 func (t *Time) Set(str string) error {
 	var err error
 	t.Time, err = time.Parse(time.RFC3339Nano, str)
@@ -147,10 +148,9 @@ func (t *Time) Set(str string) error {
 	return makeParseError("parse", str, t.Time)
 }
 
-// Unmarshals from a byte string representation of a time.Time.
-// It behaves like Set,
-// except that it returns an UnmarshalError instead of a ParseError if
-// text is an invalid RFC3339 string.
+// UnmarshalText unmarshals from a byte string to t.
+// It behaves like Set, except that it returns an UnmarshalError instead of a
+// ParseError if text is an invalid RFC3339 byte string.
 func (t *Time) UnmarshalText(text []byte) error {
 	err := t.Time.UnmarshalText(text)
 	t.Valid = err == nil && len(text) > 0
@@ -161,17 +161,19 @@ func (t *Time) UnmarshalText(text []byte) error {
 	return makeUnmarshalError("text", text, *t)
 }
 
-// Unmarshals from a JSON object. If the JSON object is the JSON null value,
-// or an error is produced, Time becomes invalid.
-// If the JSON object is a JSON string, UnmarshalJSON attempts to parse the
-// object. If the JSON string is a valid RFC3339 datetime,
-// the underlying value is set to the parsed value and Time becomes valid,
-// otherwise Time becomes invalid and a ParseError is returned. Other JSON types
-// produce a TypeError. Malformed JSON produces an UnmarshalError.
+// UnmarshalJSON unmarshals from a JSON encoded byte string to t.
+// If the encoded JSON data represent the JSON null value,
+// or an error is produced, t becomes invalid. If the encoded JSON data
+// represent a valid RFC3339 JSON string, t becomes valid, and the underlying
+// value of t is set to the JSON string. If the encoded JSON data represent
+// a JSON string, but not formatted according to the RFC3339 standard,
+// a ParseError is returned. Other JSON types produce a TypeError.
+// Malformed JSON produces an UnmarshalError.
 func (t *Time) UnmarshalJSON(data []byte) error {
 	var obj interface{}
 	var err error
 	if json.Unmarshal(data, &obj) != nil {
+		t.Valid = false
 		return makeUnmarshalError("json", data, *t)
 	}
 	switch value := obj.(type) {
@@ -191,10 +193,10 @@ func (t *Time) UnmarshalJSON(data []byte) error {
 	}
 }
 
-// Assigns a value from a database driver. If obj's type is time.Time,
-// Time becomes valid, and the underlying time.Time becomes the value of obj.
-// If obj is nil, Time becomes invalid. If obj's type is any other type,
-// Time becomes invalid, and a TypeError is returned.
+// Scan assigns a value from a database driver. If obj's type is time.Time,
+// t becomes valid, and the underlying value of t becomes the value of obj.
+// If obj is nil, t becomes invalid. If obj's type is any other type,
+// t becomes invalid, and a TypeError is returned.
 func (t *Time) Scan(obj interface{}) error {
 	switch value := obj.(type) {
 	case time.Time:
