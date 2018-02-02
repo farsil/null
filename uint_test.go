@@ -353,6 +353,27 @@ func TestUint_MarshalJSON(t *testing.T) {
 	}
 }
 
+func TestUint_Value64(t *testing.T) {
+	u := null.Uint{
+		Uint:  (^uint(0)) ^ (^uint(0) >> 1),
+		Valid: true,
+	}
+	val64 := uint64(1 << 63)
+	errType := reflect.TypeOf(null.ConversionError{})
+
+	if val64 != uint64(u.Uint) {
+		t.Skipf("%s: uint is not 64-bit, skipping", t.Name())
+	}
+
+	_, err := u.Value()
+	if errType != reflect.TypeOf(err) {
+		t.Fatalf(
+			"%s: wrong error type (expected %v, got %v)",
+			t.Name(), errType, reflect.TypeOf(err),
+		)
+	}
+}
+
 func TestUint_Value(t *testing.T) {
 	nilType := reflect.TypeOf(nil)
 	i64Type := reflect.TypeOf(int64(0))
