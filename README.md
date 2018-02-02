@@ -96,6 +96,6 @@ https://godoc.org/github.com/farsil/null.
 
 ## Credits
 This repository is heavily inspired by https://github.com/guregu/null. I 
-originarily wanted to create a fork of that repository, but since there are 
+originally wanted to create a fork of that repository, but since there are 
 critical incompatibilities of interfaces and behavior, I decided to start from 
 scratch.
