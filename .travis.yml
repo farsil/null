@@ -1,5 +1,7 @@
 language: go
 
+go_import_path: github.com/farsil/null
+
 env:
   - GOARCH=386
   - GOARCH=amd64
