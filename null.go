@@ -117,7 +117,8 @@ empty, otherwise it will be valid and it will hold the content of "-bar".
 package null
 
 const (
-	// Returned by String when the nullable is not valid.
+	// InvalidNullableString is returned by String methods when the nullable is
+	// not valid.
 	InvalidNullableString = "<invalid>"
 
 	// 32 or 64 bit integers

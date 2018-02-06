@@ -109,9 +109,8 @@ func (b Bool) MarshalJSON() (data []byte, err error) {
 	if b.Valid {
 		if b.Bool {
 			return jTrue, nil
-		} else {
-			return jFalse, nil
 		}
+		return jFalse, nil
 	}
 	return jNull, nil
 }
