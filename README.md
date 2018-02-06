@@ -1,7 +1,13 @@
 # null
+[![GoDoc](https://godoc.org/github.com/farsil/null?status.svg)](https://godoc.org/github.com/farsil/null)
+[![Build Status](https://travis-ci.org/farsil/null.svg?branch=master)](https://travis-ci.org/farsil/null) 
+[![Code Coverage](https://codecov.io/gh/farsil/null/branch/master/graph/badge.svg)](https://codecov.io/gh/farsil/null)
+[![Go Report Card](https://goreportcard.com/badge/github.com/farsil/null)](https://goreportcard.com/report/github.com/farsil/null)
+
 ```
 import "github.com/farsil/null"
 ```
+
 `null` is a [Go](https://golang.org/) package which aims to provide a 
 reasonable way to deal with undefined values. It defines wrapper types that 
 hold a boolean flag to specify whether the wrapped type is valid or not. The 
