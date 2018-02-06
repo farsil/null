@@ -1,0 +1,5 @@
+language: go
+
+env:
+  - GOARCH=386
+  - GOARCH=amd64
