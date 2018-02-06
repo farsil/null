@@ -6,4 +6,4 @@ env:
   - GOARCH=386
   - GOARCH=amd64
 
-script: go test -v
+install: true
