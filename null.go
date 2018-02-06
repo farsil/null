@@ -16,8 +16,8 @@ the omitempty struct tag:
 	}
 
 In the example, bar is a String. If bar is valid, Ptr() returns a
-pointer to the underlying value, otherwise returns nil. json.
-Marshal will recognize nil pointers as empty values,
+pointer to the underlying value, otherwise returns nil. json.Marshal
+will recognize nil pointers as empty values,
 omitting the associated name from the JSON output.
 */
 package null

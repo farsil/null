@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-// Unt implements a nullable uint.
+// Uint implements a nullable uint.
 type Uint struct {
 	// Uint holds the underlying uint value.
 	Uint uint
