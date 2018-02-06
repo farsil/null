@@ -5,3 +5,9 @@ go_import_path: "null"
 env:
   - GOARCH=386
   - GOARCH=amd64
+
+script:
+  - go test -race -coverprofile=coverage.txt -covermode=atomic
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
