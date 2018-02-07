@@ -509,6 +509,7 @@ func TestString_UnmarshalJSON(t *testing.T) {
 		{[]byte(`"foo"`), "foo", true, nilType},
 		{[]byte(`"bar"`), "bar", true, nilType},
 		{[]byte(`""`), "", true, nilType},
+		{[]byte("null"), "", false, nilType},
 		{nil, "", false, unmarshalErrType},
 		{[]byte(""), "", true, unmarshalErrType},
 		{[]byte("1"), "", true, typeErrType},

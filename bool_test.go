@@ -531,6 +531,7 @@ func TestBool_UnmarshalJSON(t *testing.T) {
 	}{
 		{[]byte("false"), false, true, nilType},
 		{[]byte("true"), true, true, nilType},
+		{[]byte("null"), false, false, nilType},
 		{[]byte("FALSE"), false, false, unmarshalErrType},
 		{[]byte("TRUE"), true, false, unmarshalErrType},
 		{[]byte("False"), false, false, unmarshalErrType},
