@@ -101,13 +101,13 @@ func (s String) MarshalText() (data []byte, err error) {
 }
 
 // MarshalJSON encodes the underlying value of s to a JSON string if s is
-// valid, otherwise it returns the JSON null value. If the underlying value of s
-// cannot be marshaled, a MarshalError is returned.
+// valid, otherwise it returns the JSON null value. err is always nil.
 func (s String) MarshalJSON() (data []byte, err error) {
 	if s.Valid {
 		bytes, err := json.Marshal(s.Str)
 		if err != nil {
-			return nil, makeMarshalError("json", s)
+			// this should never happen
+			panic(err)
 		}
 		return bytes, nil
 	}
