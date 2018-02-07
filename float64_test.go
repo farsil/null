@@ -377,7 +377,7 @@ func TestFloat64_MarshalJSON(t *testing.T) {
 		},
 		{
 			null.Float64{Float64: -1E+10, Valid: true},
-			[]byte("-10000000000"), nilType,
+			[]byte("-1e+10"), nilType,
 		},
 		{
 			null.Float64{},
