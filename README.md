@@ -1,6 +1,7 @@
 # null
 [![GoDoc](https://godoc.org/github.com/farsil/null?status.svg)](https://godoc.org/github.com/farsil/null)
-[![Build Status](https://travis-ci.org/farsil/null.svg?branch=master)](https://travis-ci.org/farsil/null) 
+[![Build Status](https://travis-ci.org/farsil/null.svg?branch=master)](https://travis-ci.org/farsil/null) [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Ffarsil%2Fnull.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Ffarsil%2Fnull?ref=badge_shield)
+
 [![Code Coverage](https://codecov.io/gh/farsil/null/branch/master/graph/badge.svg)](https://codecov.io/gh/farsil/null)
 [![Go Report Card](https://goreportcard.com/badge/github.com/farsil/null)](https://goreportcard.com/report/github.com/farsil/null)
 
@@ -105,3 +106,7 @@ This repository is heavily inspired by https://github.com/guregu/null. I
 originally wanted to create a fork of that repository, but since there are 
 critical incompatibilities of interfaces and behavior, I decided to start from 
 scratch.
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Ffarsil%2Fnull.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Ffarsil%2Fnull?ref=badge_large)
