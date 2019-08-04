@@ -1,8 +1,8 @@
 # null
-[![GoDoc](https://godoc.org/github.com/farsil/null?status.svg)](https://godoc.org/github.com/farsil/null)
-[![Build Status](https://travis-ci.org/farsil/null.svg?branch=master)](https://travis-ci.org/farsil/null) 
+[![Build Status](https://travis-ci.com/farsil/null.svg?branch=master)](https://travis-ci.com/farsil/null) 
 [![Code Coverage](https://codecov.io/gh/farsil/null/branch/master/graph/badge.svg)](https://codecov.io/gh/farsil/null)
 [![Go Report Card](https://goreportcard.com/badge/github.com/farsil/null)](https://goreportcard.com/report/github.com/farsil/null)
+[![GoDoc](https://godoc.org/github.com/farsil/null?status.svg)](https://godoc.org/github.com/farsil/null)
 
 ```
 import "github.com/farsil/null"
